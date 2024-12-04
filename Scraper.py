@@ -8,66 +8,58 @@ url = "https://streetfighter.fandom.com/wiki/Evolution_Championship_Series#Resul
 response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
 
-# Extract all tables with the 'wikitable' class
+# Initialize a list to store all the tournament data
+all_data = []
+
+# Find all tables on the page (for each game and event)
 tables = soup.find_all('table', {'class': 'wikitable'})
 
-# List to hold all DataFrames
-all_tables = []
-
 # Loop through each table
-for table_index, table in enumerate(tables, start=1):
-    rows = table.find_all('tr')
-    data = []
+for table in tables:
+    # Extract the event name from the <h3> tag above the table
+    event_header = table.find_previous('h3')
+    event_name = event_header.text.strip() if event_header else 'Unknown Event'
 
-    # Extract the closest header for the table
-    table_header = table.find_previous(['h2', 'h3'])  # Look for the nearest <h2> or <h3>
-    if table_header:
-        table_id = table_header.text.strip()
-    else:
-        table_id = f"Table_{table_index}"  # Fallback if no header is found
+    # Extract the year from the <p> tag after the event title
+    year = None
+    p_tag = table.find_previous('p')
+    if p_tag:
+        year_text = p_tag.text.strip()
+        # Attempt to extract the year from the text (the year should typically be 4 digits)
+        for word in year_text.split():
+            if word.isdigit() and len(word) == 4:
+                year = word
+                break
 
-    # Attempt to extract year from the table header
-    year = ''.join(filter(str.isdigit, table_id))[:4] if any(char.isdigit() for char in table_id) else "Unknown"
+    if not year:
+        year = 'Unknown Year'
 
-    # Process each row in the table
-    for row in rows[1:]:  # Skip the header row
+    # Extract rows of the table and loop through them (skip the header row)
+    rows = table.find_all('tr')[1:]  # Skip the header row
+    
+    for row in rows:
         cols = row.find_all('td')
-        cols = [ele.text.strip() for ele in cols]
+        
+        if len(cols) < 4:  # Skip rows that do not have enough columns
+            continue
 
-        # Standardize row length by padding with None
-        while len(cols) < 5:
-            cols.append(None)
+        place = cols[0].text.strip()
+        player = cols[1].text.strip()
+        alias = cols[2].text.strip()
+        characters = cols[3].text.strip()
 
-        if cols:
-            data.append(cols)
+        # Skip if there are multiple players listed (i.e., team matches)
+        if ',' in player or 'and' in player:
+            continue
 
-    # Convert to DataFrame
-    df = pd.DataFrame(data, columns=['Column_1', 'Column_2', 'Column_3', 'Column_4', 'Column_5'])
+        # Store data as a row in a list
+        all_data.append([place, player, alias, characters, event_name, year])
 
-    # Rename columns
-    df.rename(
-        columns={
-            'Column_1': 'Place',
-            'Column_2': 'Player',
-            'Column_3': 'Player Alias',
-            'Column_4': 'Street Fighter Character(s) Used',
-            'Column_5': 'Additional Info'
-        },
-        inplace=True
-    )
+# Convert the list of data into a DataFrame
+df = pd.DataFrame(all_data, columns=['Place', 'Player', 'Alias', 'Character(s)', 'Event Name', 'Year'])
 
-    # Add Table_ID and Year columns
-    df['Table_ID'] = table_id
-    df['Year'] = year
+# Save the DataFrame to a CSV file
+df.to_csv('evo_results.csv', index=False)
 
-    # Append the DataFrame to the list
-    all_tables.append(df)
-
-# Combine all DataFrames into a single DataFrame
-combined_df = pd.concat(all_tables, ignore_index=True)
-
-# Save the combined data to a CSV file
-combined_df.to_csv('evo_results_all_tables_fixed.csv', index=False)
-
-# Display the first few rows to check the combined data
-print(combined_df.head())
+# Display the DataFrame for verification
+print(df.head())
