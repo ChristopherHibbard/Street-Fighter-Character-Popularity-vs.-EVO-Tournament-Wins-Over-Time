@@ -1,16 +1,18 @@
 import pandas as pd
 
-# Load the event results CSV
+# CSV Files Load
 results_df = pd.read_csv('evo_results.csv')
+characters_df = pd.read_csv('top_street_fighter_character.csv')
 
-# Load the top character CSV
-characters_df = pd.read_csv('Top_Street_Fighter_Character.csv')
+# Convert Year column to strings due to Nan error
+results_df['Year'] = results_df['Year'].astype(str)
+characters_df['Year'] = characters_df['Year'].astype(str)
 
-# Merge the datasets on the 'Year' column
+# Merge dataframe
 merged_df = pd.merge(results_df, characters_df, on='Year', how='left')
 
-# Save the merged dataframe to a new CSV file
-merged_df.to_csv('Character_Master_File.csv', index=False)
+# Save the dataframe
+merged_df.to_csv('character_master_file.csv', index=False)
 
-# Display the first few rows of the merged dataframe
-print(merged_df.head())
+# Print result
+print(merged_df)
