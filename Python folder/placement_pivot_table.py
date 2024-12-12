@@ -1,7 +1,7 @@
 import pandas as pd
 
 # CSV to df
-df = pd.read_csv('character_master_file.csv')
+df = pd.read_csv('CSVs Files/character_master_file.csv')
 
 # Filter: Matching Top Character to Character(s)
 df_filtered = df[df['Top Character'] == df['Character(s)']]
@@ -22,7 +22,7 @@ pivot_table = df_filtered.pivot_table(
 print(pivot_table)
 
 
-pivot_table.to_csv('filtered_pivot_table.csv')
+pivot_table.to_csv('CSVs Files/filtered_pivot_table.csv')
 
 
 print("Pivot table saved to 'filtered_pivot_table.csv'")

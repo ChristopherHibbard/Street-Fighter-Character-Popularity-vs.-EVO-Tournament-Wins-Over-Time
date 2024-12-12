@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Read pivot table CSV
-pivot_table = pd.read_csv('filtered_pivot_table.csv', index_col=['Year', 'Character(s)'])
+pivot_table = pd.read_csv('CSVs Files/filtered_pivot_table.csv', index_col=['Year', 'Character(s)'])
 
 # Index reset for easier reading without errors
 pivot_table_reset = pivot_table.reset_index()
@@ -34,5 +34,5 @@ plt.xticks(yearly_sums.index, rotation=45)
 plt.tight_layout()
 
 # Save and show
-plt.savefig('Popular_character_placement.png')  
+plt.savefig('CSVs Files/Popular_character_placement.png')  
 plt.show()  
