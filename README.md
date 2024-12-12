@@ -3,7 +3,7 @@
 <img src="img/Cammy.png" alt="Cammy SF image" width="495" height="396">
 
 ## About
-Greetings! This analysis will dive into the world of Street Fighter (a game created a pubished by Capcom), and the world of Evolution Championship Series (also known as EVO tournaments.) More importantly we will be asking a simple question of, "Does character popularity affect player choice in tournament play.
+Greetings! This analysis will dive into the world of Street Fighter (a game created a pubished by Capcom), and the world of Evolution Championship Series (also known as EVO tournaments.) More importantly we will be asking a simple question of, "Does character popularity affect player choice in tournament play?"
 
 ## History
 Street Fighter is one of the most iconic and influential video game franchises in history. Spawning mulitple games, spinoffs, animated movies and series, comic books, and even a live action movie!  
